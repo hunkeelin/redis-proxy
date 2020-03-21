@@ -1,4 +1,4 @@
-package main
+package redisproxy
 
 import (
 	log "github.com/sirupsen/logrus"

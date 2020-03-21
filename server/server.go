@@ -1,9 +1,12 @@
-package main
+package redisproxy
 
 import (
+	"github.com/go-redis/redis"
 	"github.com/hunkeelin/mtls/v2/klinserver"
 	"github.com/prometheus/client_golang/prometheus"
 	"net/http"
+	"os"
+
 	"strconv"
 	"sync/atomic"
 	"time"

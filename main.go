@@ -1,5 +1,9 @@
 package main
 
+import (
+	redisproxy "github.com/hunkeelin/redis-proxy/server"
+)
+
 func main() {
-	panic(Server())
+	panic(redisproxy.Server())
 }
