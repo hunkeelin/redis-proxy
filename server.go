@@ -10,7 +10,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-// The function to start the server
 func Server() error {
 	cacheMap := make(map[string]cacheInfo)
 	cacheMap["foo"] = cacheInfo{
