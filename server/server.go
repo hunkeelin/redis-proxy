@@ -1,12 +1,12 @@
 package redisproxy
 
 import (
+	"fmt"
 	"github.com/go-redis/redis"
-	"github.com/hunkeelin/mtls/v2/klinserver"
+	httpserver "github.com/hunkeelin/server"
 	"github.com/prometheus/client_golang/prometheus"
 	"net/http"
 	"os"
-
 	"strconv"
 	"sync/atomic"
 	"time"
@@ -22,6 +22,7 @@ var (
 	redisPassword string
 	redisDb       int
 	hostPort      string
+	cacheCapacity int
 )
 
 func init() {
@@ -43,7 +44,22 @@ func init() {
 		if err != nil {
 			panic(err)
 		}
+		if cachettl < 1 {
+			panic(fmt.Errorf("Please give a ttl for each cache of over 1 second"))
+		}
 		ttl = float64(cachettl)
+	}
+	if os.Getenv("CACHECAPACITY") == "" {
+		cacheCapacity = 10
+	} else {
+		cachecap, err := strconv.Atoi(os.Getenv("CACHECAPACITY"))
+		if err != nil {
+			panic(err)
+		}
+		if cachecap < 10 {
+			panic(fmt.Errorf("Please give a cache capcity of at least 10"))
+		}
+		cacheCapacity = cachecap
 	}
 	if os.Getenv("HOSTPORT") == "" {
 		hostPort = "2020"
@@ -80,12 +96,14 @@ func init() {
 // Function to start the server
 func Server() error {
 	cacheMap := make(map[string]cacheInfo)
-	cacheMap["foo"] = cacheInfo{
-		modifiedAt: time.Now(),
-		item:       "bar",
-	}
-	c := serverInit{
-		cache: cacheMap,
+	client := redis.NewClient(&redis.Options{
+		Addr:     redisHost + ":" + redisPort,
+		Password: redisPassword,
+		DB:       redisDb,
+	})
+	c := conn{
+		cache:       cacheMap,
+		redisClient: client,
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -94,7 +112,7 @@ func Server() error {
 	mux.Handle("/metrics", promhttp.InstrumentMetricHandler(
 		prometheus.DefaultRegisterer, promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{}),
 	))
-	j := &klinserver.ServerConfig{
+	j := &httpserver.ServerConfig{
 		BindPort: hostPort,
 		BindAddr: "",
 		ServeMux: mux,
@@ -112,5 +130,5 @@ func Server() error {
 			}
 		}
 	}()
-	return klinserver.Server(j)
+	return httpserver.Server(j)
 }

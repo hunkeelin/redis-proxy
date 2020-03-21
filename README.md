@@ -13,3 +13,10 @@ This project implements additional features on top of redis
 
 `redis-proxy` is currently compatible with golang version from 1.12+.
 
+## Features
+* HTTP webservice: Clients interface to the Redis proxy through HTTP, with the
+Redis “GET” command mapped to the HTTP “GET” method.
+Note that the proxy still uses the Redis protocol to
+communicate with the backend Redis server.
+* Single backing instance: Each instance of the proxy service is associated with a single Redis service instance. The address of the backing Redis is configured at proxy startup via an env variable. 
+* Cached GET: This proxy have a caching mechanism with 5 minutes of expiration for each cache. The duration can be set via env variable as well. With size limitation
