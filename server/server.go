@@ -16,7 +16,7 @@ import (
 
 var (
 	redisHost     string  // the backing redis host
-	redisPort     string  // teh backing redis port
+	redisPort     string  // the backing redis port
 	ttl           float64 // time to live for each cache item
 	cacheSize     int
 	redisPassword string
