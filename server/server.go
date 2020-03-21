@@ -93,7 +93,7 @@ func init() {
 	}
 }
 
-// Function to start the server
+// Server Function to start the server
 func Server() error {
 	cacheMap := make(map[string]cacheInfo)
 	client := redis.NewClient(&redis.Options{
