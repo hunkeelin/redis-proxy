@@ -7,7 +7,7 @@ require (
 	github.com/hunkeelin/SuperCAclient v0.0.0-20190706173239-2739a40f3df4 // indirect
 	github.com/hunkeelin/klinutils v0.0.0-20200204220100-1eaf13f4b0d3 // indirect
 	github.com/hunkeelin/pki v0.0.0-20190430210513-917229f80225 // indirect
-	github.com/hunkeelin/server v0.0.0-20200321220937-dd896afb755c
+	github.com/hunkeelin/server v0.0.0-20200321222248-207867df9c40
 	github.com/prometheus/client_golang v1.5.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/theckman/go-flock v0.7.1 // indirect
