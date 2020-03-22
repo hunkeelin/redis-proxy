@@ -6,9 +6,6 @@ import (
 	"testing"
 )
 
-func TestHello(t *testing.T) {
-	fmt.Println("hello")
-}
 func TestRedis(t *testing.T) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisHost + ":6379",
