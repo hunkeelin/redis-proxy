@@ -22,9 +22,8 @@ func TestCurate(t *testing.T) {
 	if ok {
 		fmt.Println("curate test failed")
 		return
-	} else {
-		fmt.Println("curate() test pass")
 	}
+	fmt.Println("curate() test pass")
 }
 func TestCurateleastuse(t *testing.T) {
 	fmt.Println("testing curateLeastUse()")
