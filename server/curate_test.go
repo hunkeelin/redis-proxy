@@ -16,7 +16,7 @@ func TestCurate(t *testing.T) {
 		item:       "bar",
 		modifiedAt: time.Now().Add(time.Duration(-60) * time.Minute),
 	}
-	ttl = 30 // setting ttl for the cache to be 30 seconds
+	c.cachettl = 30 // setting c.cachettl for the cache to be 30 seconds
 	c.curate()
 	_, ok := c.cache["foo"]
 	if ok {
@@ -37,8 +37,8 @@ func TestCurateleastuse(t *testing.T) {
 		item:       "bar1",
 		modifiedAt: time.Now().Add(time.Duration(-30) * time.Second),
 	}
-	cacheCapacity = 1
-	ttl = 25
+	c.cacheCapacity = 1
+	c.cachettl = 25
 	c.curateLeastUse()
 	_, ok := c.cache["foo1"]
 	if ok {

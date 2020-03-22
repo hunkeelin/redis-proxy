@@ -10,7 +10,7 @@ func (c *conn) curate() error {
 	defer c.cacheMu.Unlock()
 	log.Info("Curating cache")
 	for key, val := range c.cache {
-		if time.Now().Sub(val.modifiedAt).Seconds() > ttl {
+		if time.Now().Sub(val.modifiedAt).Seconds() > c.cachettl {
 			delete(c.cache, key)
 		}
 	}
@@ -19,7 +19,7 @@ func (c *conn) curate() error {
 func (c *conn) curateLeastUse() {
 	c.cacheMu.Lock()
 	defer c.cacheMu.Unlock()
-	if len(c.cache) < cacheCapacity {
+	if len(c.cache) < c.cacheCapacity {
 		return
 	}
 	log.Info("The cache is full, curating least use")
@@ -27,8 +27,8 @@ func (c *conn) curateLeastUse() {
 	var longestliving float64
 	now := time.Now()
 	for key, val := range c.cache {
-		// If the item is close to ttl just delete it.  it's going to curate by the periodic curate anyways, this logic save time.
-		if now.Sub(val.modifiedAt).Seconds() > ttl {
+		// If the item is close to c.cachettl just delete it.  it's going to curate by the periodic curate anyways, this logic save time.
+		if now.Sub(val.modifiedAt).Seconds() > c.cachettl {
 			delete(c.cache, key)
 			return
 		}

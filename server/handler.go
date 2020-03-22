@@ -41,9 +41,7 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 
 	cachemiss.Inc()
 	// cache over capacity need to curate one
-	if len(c.cache) > cacheCapacity {
-		c.curateLeastUse()
-	}
+	c.curateLeastUse()
 	w.Write([]byte(val))
 	c.cacheCreate(requestkey, val)
 	statusOK.Inc()
