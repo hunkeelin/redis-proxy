@@ -21,7 +21,7 @@ As of now `redis-proxy` will only accept `GET` request. Any other method will re
  redis-proxy implements `/metrics` URI for prometheus to grab metrics. 
 * `cachehit`: The total number of cache hit
 * `cachemiss`: The total number of cache miss 
-* `curatequeue`: The total number of curate being queued behind. Note this is an important metrics, this indicates that the curating the cache is taking longer than the curate cycle. Either the cache size will need to be lower or increase the time between the curate cycle. 
+* `curatequeue`: The total number of curate being queued behind. Note this is an important metric. It indicates that curating the cache is taking longer than the curate cycle. Either the cache size will need to be lower or increase the time between the curate cycle. 
 * `invalidekey`: The total number of times when client request an invalid key
 * `http_status_200`: The total number of `StatusOK` response.
 * `http_status_400`: The total number of `StatusBadRequest` response. Usually from client didn't specify `rediskey` as header.
