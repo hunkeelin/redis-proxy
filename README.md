@@ -5,16 +5,16 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hunkeelin/redis-proxy/master/LICENSE)
 
 
-## Motivations
-
-This project implements additional features on top of redis
+## Overview
+This repo implements the redis-proxy service in pods in the below diagram
+![Architecture](images/arch.png)
 
 ## Golang version
 
 `redis-proxy` is currently compatible with golang version from 1.12+.
 
 ## User Manual
-* The server only allow `GET` and it requires header `rediskey`. For detail documentation on configurations please checkout [documentation](DOCUMENTATION.md).
+* The server only allow `GET` and it requires header `rediskey`. For detail documentation on configurations please checkout [documentation](server/README.md).
 ## Usage
 ```go
 package main
