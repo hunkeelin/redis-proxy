@@ -33,12 +33,14 @@ func TestCurateleastuse(t *testing.T) {
 	}
 	c.cache["foo"] = cacheInfo{
 		item:       "bar",
-		modifiedAt: time.Now().Add(time.Duration(-20) * time.Minute),
+		modifiedAt: time.Now().Add(time.Duration(-20) * time.Second),
 	}
 	c.cache["foo1"] = cacheInfo{
 		item:       "bar1",
-		modifiedAt: time.Now().Add(time.Duration(-30) * time.Minute),
+		modifiedAt: time.Now().Add(time.Duration(-30) * time.Second),
 	}
+	cacheCapacity = 1
+	ttl = 25
 	c.curateLeastUse()
 	_, ok := c.cache["foo1"]
 	if ok {

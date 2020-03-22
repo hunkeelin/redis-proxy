@@ -19,10 +19,10 @@ func (c *conn) curate() error {
 func (c *conn) curateLeastUse() {
 	c.cacheMu.Lock()
 	defer c.cacheMu.Unlock()
-	log.Info("The cache is full, curating least use")
 	if len(c.cache) < cacheCapacity {
 		return
 	}
+	log.Info("The cache is full, curating least use")
 	var leastusekey string
 	var longestliving float64
 	now := time.Now()
