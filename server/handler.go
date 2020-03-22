@@ -4,7 +4,6 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"net/http"
-	"time"
 )
 
 func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,11 +25,7 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 	// This is a cache hit
 	if ok {
 		cachehit.Inc()
-		c.cacheMu.Lock()
-		tmp := c.cache[requestkey]
-		tmp.modifiedAt = time.Now()
-		c.cache[requestkey] = tmp
-		c.cacheMu.Unlock()
+		c.cacheUpdate(requestkey)
 		w.Write([]byte(val))
 		return
 	}
@@ -50,12 +45,7 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 		c.curateLeastUse()
 	}
 	w.Write([]byte(val))
-	c.cacheMu.Lock()
-	c.cache[requestkey] = cacheInfo{
-		item:       val,
-		modifiedAt: time.Now(),
-	}
-	c.cacheMu.Unlock()
+	c.cacheCreate(requestkey, val)
 	statusOK.Inc()
 	return
 }
