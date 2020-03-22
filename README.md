@@ -13,6 +13,8 @@ This project implements additional features on top of redis
 
 `redis-proxy` is currently compatible with golang version from 1.12+.
 
+## User Manual
+* The server only allow `GET` and it requires header `rediskey`. For detail documentation on configurations please checkout [documentation](DOCUMENTATION.md).
 ## Usage
 ```go
 package main
@@ -26,11 +28,48 @@ func main() {
 }
 ```
 
+## Example
+```bash
+$ redis-cli
+127.0.0.1:6379> set foo1 bar1
+OK
+127.0.0.1:6379> set foo2 bar2
+OK
+127.0.0.1:6379> set foo3 bar3
+OK
+127.0.0.1:6379> set foo4 bar4
+OK
+127.0.0.1:6379> set foo5 bar5
+OK
+127.0.0.1:6379> exit
+
+$ make build
+o build -o redis-proxy -v
+$ export CACHECAPACITY=3
+$ ./redis-proxy &
+listening to :2020
+
+// Should fail because require header 
+$ curl -i localhost:2020
+HTTP/1.1 400 Bad Request
+Date: Sun, 22 Mar 2020 05:26:32 GMT
+Content-Length: 0
+
+$ curl -i localhost:2020 -H "rediskey: foo1"
+HTTP/1.1 200 OK
+Date: Sun, 22 Mar 2020 05:27:20 GMT
+Content-Length: 4
+Content-Type: text/plain; charset=utf-8
+
+bar1
+
+```
+
 ## Features
 * HTTP webservice: Clients interface to the Redis proxy through HTTP, with the
 Redis `GET` command mapped to the HTTP `GET` method.
 * Single backing instance: Each instance of the proxy service is associated with a single Redis service instance. The address of the backing Redis is configured at proxy startup via an env variable. 
-* Cached GET: This proxy have a caching mechanism with 5 minutes of expiration for each cache. The duration can be set via env variable as well. With size limitation/ 
+* Cached GET: This proxy have a caching mechanism with 5 minutes of expiration for each cache. The duration can be set via env variable as well. With size limitation.
 * Included `/metrics` URI for prometheus. 
 * configuratable server via env variables. 
 

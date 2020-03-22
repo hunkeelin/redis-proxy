@@ -6,6 +6,7 @@ import (
 	httpserver "github.com/hunkeelin/server"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"strconv"
@@ -17,11 +18,11 @@ var (
 	redisHost     string  // the backing redis host
 	redisPort     string  // the backing redis port
 	ttl           float64 // time to live for each cache item
-	cacheSize     int
 	redisPassword string
 	redisDb       int
 	hostPort      string
 	cacheCapacity int
+	curateCycle   int
 )
 
 func setServerConfig() error {
@@ -69,6 +70,18 @@ func setServerConfig() error {
 		}
 		hostPort = os.Getenv("HOSTPORT")
 	}
+	if os.Getenv("CURATECYCLE") == "" {
+		curateCycle = 30
+	} else {
+		cycle, err := strconv.Atoi(os.Getenv("CURATECYCLE"))
+		if err != nil {
+			return (err)
+		}
+		if cycle < 30 || cycle > 600 {
+			return (fmt.Errorf("Please have a curate cycle between 30 to 600 seconds"))
+		}
+		curateCycle = cycle
+	}
 
 	redisPassword = os.Getenv("REDISPASSWORD")
 	if os.Getenv("REDISDB") == "" {
@@ -91,6 +104,16 @@ func setServerConfig() error {
 		return (err)
 	}
 	return nil
+}
+
+func showConfig() {
+	log.Info("Starting proxy with the following configuration")
+	log.Info(fmt.Sprintf("Redis Backing Host: %v", redisHost))
+	log.Info(fmt.Sprintf("Redis Backing port: %v", redisPort))
+	log.Info(fmt.Sprintf("Cache TTL: %v seconds", ttl))
+	log.Info(fmt.Sprintf("Number of Cache:  %v", cacheCapacity))
+	log.Info(fmt.Sprintf("Host port: %v", hostPort))
+	log.Info(fmt.Sprintf("Curate Cycle: %v seconds", curateCycle))
 }
 
 // Server Function to start the server
@@ -127,7 +150,7 @@ func Server() error {
 	var curateIsRunning uint32
 	go func() {
 		for {
-			time.Sleep(30 * time.Second)
+			time.Sleep(time.Duration(curateCycle) * time.Second)
 			if atomic.CompareAndSwapUint32(&curateIsRunning, 0, 1) {
 				c.curate()
 				atomic.StoreUint32(&curateIsRunning, 0)
@@ -136,5 +159,6 @@ func Server() error {
 			}
 		}
 	}()
+	showConfig()
 	return httpserver.Server(j)
 }
