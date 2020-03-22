@@ -5,13 +5,12 @@ import (
 	"github.com/go-redis/redis"
 	httpserver "github.com/hunkeelin/server"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 	"os"
 	"strconv"
 	"sync/atomic"
 	"time"
-	//	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -56,8 +55,8 @@ func init() {
 		if err != nil {
 			panic(err)
 		}
-		if cachecap < 10 {
-			panic(fmt.Errorf("Please give a cache capcity of at least 10"))
+		if cachecap < 2 {
+			panic(fmt.Errorf("Please give a cache capcity of at least 2"))
 		}
 		cacheCapacity = cachecap
 	}
@@ -127,6 +126,8 @@ func Server() error {
 			if atomic.CompareAndSwapUint32(&curateIsRunning, 0, 1) {
 				c.curate()
 				atomic.StoreUint32(&curateIsRunning, 0)
+			} else {
+				curatequeue.Inc()
 			}
 		}
 	}()
