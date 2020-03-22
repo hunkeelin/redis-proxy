@@ -76,7 +76,7 @@ bar1
 * HTTP webservice: Clients interface to the Redis proxy through HTTP, with the
 Redis `GET` command mapped to the HTTP `GET` method.
 * Single backing instance: Each instance of the proxy service is associated with a single Redis service instance. The address of the backing Redis is configured at proxy startup via an env variable. 
-* Cached GET: This proxy have a caching mechanism with 5 minutes of expiration for each cache. The duration can be set via env variable as well. With size limitation.
+* Cached GET: This proxy have a caching mechanism with `x` seconds of expiration for each cache. The duration can be set via env variable as well. With size limitation.
 * Included `/metrics` URI for prometheus. 
 * configuratable server via env variables. 
 
