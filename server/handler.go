@@ -8,6 +8,7 @@ import (
 )
 
 func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
+	requestTotal.Inc()
 	var val, requestkey string
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)

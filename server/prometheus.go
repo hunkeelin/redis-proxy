@@ -38,4 +38,8 @@ var (
 		Name: "http_status_405",
 		Help: "The total number of 405 response",
 	})
+	requestTotal = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "http_request_total",
+		Help: "The total number of resquest",
+	})
 )
