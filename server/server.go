@@ -24,7 +24,7 @@ var (
 	cacheCapacity int
 )
 
-func setconfig() error {
+func setServerConfig() error {
 	if os.Getenv("REDISHOST") == "" {
 		redisHost = "localhost"
 	} else {
@@ -95,7 +95,7 @@ func setconfig() error {
 
 // Server Function to start the server
 func Server() error {
-	err := setConfig()
+	err := setServerConfig()
 	if err != nil {
 		return err
 	}
