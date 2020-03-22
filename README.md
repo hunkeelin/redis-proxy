@@ -7,7 +7,7 @@
 
 ## Overview
 This repo implements the redis-proxy service in pods in the below diagram
-![Architecture](images/arch.png)
+![Architecture](arch.png)
 
 ## Golang version
 
