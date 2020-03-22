@@ -3,6 +3,7 @@ package redisproxy
 import (
 	"fmt"
 	"github.com/go-redis/redis"
+	"os"
 	"testing"
 )
 
@@ -24,12 +25,20 @@ func TestRedis(t *testing.T) {
 	}
 	fmt.Println("foo7", val)
 }
-func TestSetconfig(t *testing.T) {
+func TestSetserverconfig(t *testing.T) {
+	fmt.Println("testing setServerConfig()")
 	err := setServerConfig()
 	if err != nil {
 		fmt.Println(err)
 	}
+	showServerConfig()
 }
-func TestShowconfig(t *testing.T) {
+func TestSetredisconfig(t *testing.T) {
+	fmt.Println("testing setRedisConfig()")
+	os.Setenv("REDISPORT", "1234")
+	err := setRedisConfig()
+	if err != nil {
+		fmt.Println(err)
+	}
 	showServerConfig()
 }

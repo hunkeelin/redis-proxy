@@ -23,6 +23,7 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 	requestkey = r.Header.Get("rediskey")
 	cacheitem, ok := c.cache[requestkey]
 	val = cacheitem.item
+	// This is a cache hit
 	if ok {
 		cachehit.Inc()
 		c.cacheMu.Lock()
@@ -31,31 +32,30 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 		c.cache[requestkey] = tmp
 		c.cacheMu.Unlock()
 		w.Write([]byte(val))
-	} else {
-		val, err := c.redisClient.Get(requestkey).Result()
-
-		// the requested key is not in cache nor in redis server
-		if err != nil {
-			log.Info(fmt.Sprintf("Client requesting key value that doesn't exist %s", requestkey))
-			invalidkey.Inc()
-			w.WriteHeader(http.StatusNotFound)
-			statusNotFound.Inc()
-			return
-		}
-
-		cachemiss.Inc()
-		// cache over capacity need to curate one
-		if len(c.cache) > cacheCapacity {
-			c.curateLeastUse()
-		}
-		w.Write([]byte(val))
-		c.cacheMu.Lock()
-		c.cache[requestkey] = cacheInfo{
-			item:       val,
-			modifiedAt: time.Now(),
-		}
-		c.cacheMu.Unlock()
+		return
 	}
+	val, err := c.redisClient.Get(requestkey).Result()
+	// the requested key is not in cache nor in redis server
+	if err != nil {
+		log.Info(fmt.Sprintf("Client requesting key value that doesn't exist %s", requestkey))
+		invalidkey.Inc()
+		w.WriteHeader(http.StatusNotFound)
+		statusNotFound.Inc()
+		return
+	}
+
+	cachemiss.Inc()
+	// cache over capacity need to curate one
+	if len(c.cache) > cacheCapacity {
+		c.curateLeastUse()
+	}
+	w.Write([]byte(val))
+	c.cacheMu.Lock()
+	c.cache[requestkey] = cacheInfo{
+		item:       val,
+		modifiedAt: time.Now(),
+	}
+	c.cacheMu.Unlock()
 	statusOK.Inc()
 	return
 }

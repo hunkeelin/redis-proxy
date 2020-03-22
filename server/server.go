@@ -25,7 +25,7 @@ var (
 	curateCycle   int
 )
 
-func setServerConfig() error {
+func setRedisConfig() error {
 	if os.Getenv("REDISHOST") == "" {
 		redisHost = "localhost"
 	} else {
@@ -36,6 +36,28 @@ func setServerConfig() error {
 	} else {
 		redisPort = os.Getenv("REDISPORT")
 	}
+	redisPassword = os.Getenv("REDISPASSWORD")
+	if os.Getenv("REDISDB") == "" {
+		redisDb = 0
+	} else {
+		db, err := strconv.Atoi(os.Getenv("REDISDB"))
+		if err != nil {
+			return (err)
+		}
+		redisDb = db
+	}
+	client := redis.NewClient(&redis.Options{
+		Addr:     redisHost + ":" + redisPort,
+		Password: redisPassword,
+		DB:       redisDb,
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		return (err)
+	}
+	return nil
+}
+func setServerConfig() error {
 
 	if os.Getenv("CACHETTL") == "" {
 		ttl = 30
@@ -83,26 +105,6 @@ func setServerConfig() error {
 		curateCycle = cycle
 	}
 
-	redisPassword = os.Getenv("REDISPASSWORD")
-	if os.Getenv("REDISDB") == "" {
-		redisDb = 0
-	} else {
-		db, err := strconv.Atoi(os.Getenv("REDISDB"))
-		if err != nil {
-			return (err)
-		}
-		redisDb = db
-	}
-
-	client := redis.NewClient(&redis.Options{
-		Addr:     redisHost + ":" + redisPort,
-		Password: redisPassword,
-		DB:       redisDb,
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		return (err)
-	}
 	return nil
 }
 
@@ -119,6 +121,10 @@ func showServerConfig() {
 // Server Function to start the server
 func Server() error {
 	err := setServerConfig()
+	if err != nil {
+		return err
+	}
+	err = setRedisConfig()
 	if err != nil {
 		return err
 	}

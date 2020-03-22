@@ -18,7 +18,7 @@ func TestCurate(t *testing.T) {
 	}
 	ttl = 30 // setting ttl for the cache to be 30 seconds
 	c.curate()
-	_, ok = c.cache["foo"]
+	_, ok := c.cache["foo"]
 	if ok {
 		fmt.Println("curate test failed")
 		return
@@ -27,6 +27,7 @@ func TestCurate(t *testing.T) {
 	}
 }
 func TestCurateleastuse(t *testing.T) {
+	fmt.Println("testing curateLeastUse()")
 	cacheMap := make(map[string]cacheInfo)
 	c := conn{
 		cache: cacheMap,
