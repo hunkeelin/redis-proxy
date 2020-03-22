@@ -27,7 +27,12 @@ func TestRedis(t *testing.T) {
 	}
 	fmt.Println("foo7", val)
 }
+func TestSetconfig(t *testing.T) {
+	err := setServerConfig()
+	if err != nil {
+		fmt.Println(err)
+	}
+}
 func TestShowconfig(t *testing.T) {
-	getServerConfig()
 	showServerConfig()
 }
