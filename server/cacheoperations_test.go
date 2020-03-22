@@ -20,9 +20,7 @@ func TestCacheupdate(t *testing.T) {
 	c.cacheUpdate("foo")
 	new := c.cache["foo"].modifiedAt
 	if new.Sub(old).Minutes() < 60 {
-		fmt.Println("Cache update test failed")
-	} else {
-		fmt.Println("Cache update test passed")
+		t.Errorf("cacheUpdate failed, foo's time didn't get update")
 	}
 
 }
@@ -34,9 +32,7 @@ func TestCachecreate(t *testing.T) {
 	}
 	c.cacheCreate("foo77", "bar88")
 	_, ok := c.cache["foo77"]
-	if ok {
-		fmt.Println("Cache create test passed")
-	} else {
-		fmt.Println("Cache create test failed")
+	if !ok {
+		t.Errorf("Cache create test failed foo77 didn't get created")
 	}
 }

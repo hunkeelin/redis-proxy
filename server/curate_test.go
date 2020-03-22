@@ -20,10 +20,8 @@ func TestCurate(t *testing.T) {
 	c.curate()
 	_, ok := c.cache["foo"]
 	if ok {
-		fmt.Println("curate test failed")
-		return
+		t.Error("cureate test failed foo didn't get curaeted")
 	}
-	fmt.Println("curate() test pass")
 }
 func TestCurateleastuse(t *testing.T) {
 	fmt.Println("testing curateLeastUse()")
@@ -44,8 +42,6 @@ func TestCurateleastuse(t *testing.T) {
 	c.curateLeastUse()
 	_, ok := c.cache["foo1"]
 	if ok {
-		fmt.Println("curateLeastUse() test failed")
-	} else {
-		fmt.Println("curateLeastUse() test passed")
+		t.Error("cureateleastuse test failed foo1 didn't get curaeted")
 	}
 }

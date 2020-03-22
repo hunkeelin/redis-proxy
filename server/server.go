@@ -46,15 +46,6 @@ func setRedisConfig() error {
 		}
 		redisDb = db
 	}
-	client := redis.NewClient(&redis.Options{
-		Addr:     redisHost + ":" + redisPort,
-		Password: redisPassword,
-		DB:       redisDb,
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		return (err)
-	}
 	return nil
 }
 func setServerConfig() error {
@@ -128,12 +119,17 @@ func Server() error {
 	if err != nil {
 		return err
 	}
-	cacheMap := make(map[string]cacheInfo)
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisHost + ":" + redisPort,
 		Password: redisPassword,
 		DB:       redisDb,
 	})
+	_, err = client.Ping().Result()
+	if err != nil {
+		return err
+	}
+
+	cacheMap := make(map[string]cacheInfo)
 	c := conn{
 		cache:       cacheMap,
 		redisClient: client,
