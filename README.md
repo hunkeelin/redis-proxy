@@ -84,3 +84,6 @@ Redis `GET` command mapped to the HTTP `GET` method.
 * Since this is just an exercise it will be up to me to decide on things and I got no way to gather requirements during my offline coding session. Sequential concurrent processing doesn't make sense in this case.(A request from the second request only starts processing after the first request has completed and a response has been returned first client) This basically means adding a mutex to the entire handler which is against `go` philosphy. If race condition is an issue we can use threadsafe techiques such as `sync/atomic` and `sync/mutex` on write operations. An example of Sequential concurrent processing is not optimal is when redis server is timing out, causing one request to halt. This will cause every subsequence request to halt, even though they could be served from cache while hoping redis comes back up. 
 * Configurations on the proxy is set via environment variables because I expect this to be deployed in docker-like environment. 
 
+## ToDo
+- Add helm.yaml for easier deployment.
+- Add terraform for to setup the infrastructure needed. 

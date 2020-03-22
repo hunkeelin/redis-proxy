@@ -10,7 +10,7 @@ BINARY_UNIX=$(BINARY_NAME)_unix
 all: test build
 
 build: 
-		$(GOBUILD) -o $(BINARY_NAME) -v
+		$(GOBUILD) -o $(BINARY_NAME) -v -race
 test: 
 		cd server/ ; $(GOTEST)
 clean: 

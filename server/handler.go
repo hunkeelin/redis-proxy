@@ -25,6 +25,11 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 	val = cacheitem.item
 	if ok {
 		cachehit.Inc()
+		c.cacheMu.Lock()
+		tmp := c.cache[requestkey]
+		tmp.modifiedAt = time.Now()
+		c.cache[requestkey] = tmp
+		c.cacheMu.Unlock()
 		w.Write([]byte(val))
 	} else {
 		val, err := c.redisClient.Get(requestkey).Result()
