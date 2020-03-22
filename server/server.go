@@ -24,7 +24,7 @@ var (
 	cacheCapacity int
 )
 
-func init() {
+func setconfig() error {
 	if os.Getenv("REDISHOST") == "" {
 		redisHost = "localhost"
 	} else {
@@ -41,10 +41,10 @@ func init() {
 	} else {
 		cachettl, err := strconv.Atoi(os.Getenv("CACHETTL"))
 		if err != nil {
-			panic(err)
+			return (err)
 		}
 		if cachettl < 1 {
-			panic(fmt.Errorf("Please give a ttl for each cache of over 1 second"))
+			return (fmt.Errorf("Please give a ttl for each cache of over 1 second"))
 		}
 		ttl = float64(cachettl)
 	}
@@ -53,10 +53,10 @@ func init() {
 	} else {
 		cachecap, err := strconv.Atoi(os.Getenv("CACHECAPACITY"))
 		if err != nil {
-			panic(err)
+			return (err)
 		}
 		if cachecap < 2 {
-			panic(fmt.Errorf("Please give a cache capcity of at least 2"))
+			return (fmt.Errorf("Please give a cache capcity of at least 2"))
 		}
 		cacheCapacity = cachecap
 	}
@@ -65,7 +65,7 @@ func init() {
 	} else {
 		_, err := strconv.Atoi(os.Getenv("HOSTPORT"))
 		if err != nil {
-			panic(err)
+			return (err)
 		}
 		hostPort = os.Getenv("HOSTPORT")
 	}
@@ -76,7 +76,7 @@ func init() {
 	} else {
 		db, err := strconv.Atoi(os.Getenv("REDISDB"))
 		if err != nil {
-			panic(err)
+			return (err)
 		}
 		redisDb = db
 	}
@@ -88,12 +88,17 @@ func init() {
 	})
 	_, err := client.Ping().Result()
 	if err != nil {
-		panic(err)
+		return (err)
 	}
+	return nil
 }
 
 // Server Function to start the server
 func Server() error {
+	err := setConfig()
+	if err != nil {
+		return err
+	}
 	cacheMap := make(map[string]cacheInfo)
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisHost + ":" + redisPort,
