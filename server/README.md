@@ -27,4 +27,5 @@ As of now `redis-proxy` will only accept `GET` request. Any other method will re
 * `http_status_400`: The total number of `StatusBadRequest` response. Usually from client didn't specify `rediskey` as header.
 * `http_status_404`: The total number of `StatusNotFound` response. Usually happen when client requested an invalid key.
 * `http_status_405`: The toaly number of `StatusMethodNotAllowed`. Usually when client send request with invalid http method. 
+* `http_request_total`: The total number of request made to this service.
 
