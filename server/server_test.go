@@ -28,6 +28,6 @@ func TestRedis(t *testing.T) {
 	fmt.Println("foo7", val)
 }
 func TestShowconfig(t *testing.T) {
-	getConfig()
-	showConfig()
+	getServerConfig()
+	showServerConfig()
 }

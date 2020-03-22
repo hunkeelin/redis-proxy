@@ -106,7 +106,7 @@ func setServerConfig() error {
 	return nil
 }
 
-func showConfig() {
+func showServerConfig() {
 	log.Info("Starting proxy with the following configuration")
 	log.Info(fmt.Sprintf("Redis Backing Host: %v", redisHost))
 	log.Info(fmt.Sprintf("Redis Backing port: %v", redisPort))
@@ -159,6 +159,6 @@ func Server() error {
 			}
 		}
 	}()
-	showConfig()
+	showServerConfig()
 	return httpserver.Server(j)
 }
