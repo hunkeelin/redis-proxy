@@ -14,7 +14,7 @@ Configurations are set during startup. The proxy will grab the following environ
 ## Methods 
 As of now `redis-proxy` will only accept `GET` request. Any other method will result in `StatusMethodNotAllowed`
 
-### Method `GET`
+### `GET`
 * Headers: `rediskey`. The key to retrieve the value from redis-proxy (required)
 
 ## Monitoring 
