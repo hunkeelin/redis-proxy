@@ -46,14 +46,17 @@ OK
 $ make build
 o build -o redis-proxy -v
 $ export CACHECAPACITY=3
+$ export REQUESTLIMIT=4
 $ ./redis-proxy &
 INFO[0000] Starting proxy with the following configuration
-INFO[0000] Redis Backing Host: `localhost`
-INFO[0000] Redis Backing port: `6379`
-INFO[0000] Cache TTL: `30` seconds
-INFO[0000] Number of Cache:  `3`
-INFO[0000] Host port: `2020`
-INFO[0000] Curate Cycle: `30` seconds
+INFO[0000] Redis Backing Host: localhost
+INFO[0000] Redis Backing port: 6379
+INFO[0000] Cache TTL: 30 seconds
+INFO[0000] Number of Cache:  10
+INFO[0000] Host port: 2020
+INFO[0000] Curate Cycle: 30 seconds
+INFO[0000] Request limit: 4
+INFO[0000] Request burst: 3
 listening to :2020
 
 // Should fail because require header 
