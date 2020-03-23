@@ -1,7 +1,7 @@
 # RedisProxy 
 [![CircleCI](https://circleci.com/gh/hunkeelin/redis-proxy.svg?style=shield)](https://circleci.com/gh/hunkeelin/redis-proxy)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hunkeelin/redis-proxy)](https://goreportcard.com/report/github.com/hunkeelin/redis-proxy)
-[![GoDoc](https://godoc.org/github.com/hunkeelin/redis-proxy/server?status.svg)](https://godoc.org/github.com/hunkeelin/redis-proxy/server)
+[![GoDoc](https://godoc.org/github.com/hunkeelin/redis-proxy/src/server?status.svg)](https://godoc.org/github.com/hunkeelin/redis-proxy/src/server)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hunkeelin/redis-proxy/master/LICENSE)
 
 
@@ -14,13 +14,13 @@ This repo implements the redis-proxy service in pods in the below diagram
 `redis-proxy` is currently compatible with golang version from 1.12+.
 
 ## User Manual
-* The server only allow `GET` and it requires header `rediskey`. For detail documentation on configurations please checkout [documentation](server/README.md).
+* The server only allow `GET` and it requires header `rediskey`. For detail documentation on configurations please checkout [documentation](src/server/README.md).
 ## Usage
 ```go
 package main
 
 import (
-    redisproxy "github.com/hunkeelin/redis-proxy/server"
+    redisproxy "github.com/hunkeelin/redis-proxy/src/server"
 )
 
 func main() {
