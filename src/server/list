@@ -1,8 +1,0 @@
-redisHost
-redisPort
-ttl
-redisPassword
-redisDb
-hostPort
-cacheCapacity
-curateCycle
