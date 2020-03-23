@@ -7,6 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/time/rate"
 	"net/http"
 	"os"
 	"strconv"
@@ -18,7 +19,6 @@ import (
 type conn struct {
 	cache       map[string]cacheInfo
 	cacheMu     sync.Mutex    // Mutex for any cache related operation
-	curateMu    sync.Mutex    // Mutex for any curate related operation
 	redisClient *redis.Client // The redis client
 	// configurations
 	redisHost     string  // the backing redis host
@@ -29,6 +29,8 @@ type conn struct {
 	hostPort      string
 	cacheCapacity int
 	curateCycle   int
+	requestLimit  rate.Limit
+	requestBurst  int
 }
 type cacheInfo struct {
 	modifiedAt time.Time
@@ -58,6 +60,7 @@ func (c *conn) setRedisConfig() error {
 	}
 	return nil
 }
+
 func (c *conn) setServerConfig() error {
 	if os.Getenv("CACHETTL") == "" {
 		c.cachettl = 30
@@ -70,6 +73,30 @@ func (c *conn) setServerConfig() error {
 			return (fmt.Errorf("Please give a c.cachettl for each cache of over 1 second"))
 		}
 		c.cachettl = float64(cachettl)
+	}
+	if os.Getenv("REQUESTBURST") == "" {
+		c.requestBurst = 3
+	} else {
+		burst, err := strconv.Atoi(os.Getenv("REQUESTBURST"))
+		if err != nil {
+			return (err)
+		}
+		if burst < 1 || burst > 10 {
+			return (fmt.Errorf("Please give a requestburst between 1 to 10."))
+		}
+		c.requestBurst = burst
+	}
+	if os.Getenv("REQUESTLIMIT") == "" {
+		c.requestLimit = 200
+	} else {
+		rlimit, err := strconv.Atoi(os.Getenv("REQUESTLIMIT"))
+		if err != nil {
+			return (err)
+		}
+		if rlimit < 3 {
+			return (fmt.Errorf("Please give a requestlimit of at least 3"))
+		}
+		c.requestLimit = rate.Limit(rlimit)
 	}
 	if os.Getenv("CACHECAPACITY") == "" {
 		c.cacheCapacity = 10
@@ -116,6 +143,8 @@ func (c *conn) showServerConfig() {
 	log.Info(fmt.Sprintf("Number of Cache:  %v", c.cacheCapacity))
 	log.Info(fmt.Sprintf("Host port: %v", c.hostPort))
 	log.Info(fmt.Sprintf("Curate Cycle: %v seconds", c.curateCycle))
+	log.Info(fmt.Sprintf("Request limit: %v", c.requestLimit))
+	log.Info(fmt.Sprintf("Request burst: %v", c.requestBurst))
 }
 
 // Server Function to start the server
@@ -129,6 +158,7 @@ func Server() error {
 	if err != nil {
 		return err
 	}
+	var limiter = rate.NewLimiter(c.requestLimit, c.requestBurst)
 	client := redis.NewClient(&redis.Options{
 		Addr:     c.redisHost + ":" + c.redisPort,
 		Password: c.redisPassword,
@@ -144,6 +174,10 @@ func Server() error {
 	c.redisClient = client
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if limiter.Allow() == false {
+			http.Error(w, http.StatusText(429), http.StatusTooManyRequests)
+			return
+		}
 		c.mainHandler(w, r)
 	})
 	mux.Handle("/metrics", promhttp.InstrumentMetricHandler(

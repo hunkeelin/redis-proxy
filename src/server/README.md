@@ -10,6 +10,8 @@ Configurations are set during startup. The proxy will grab the following environ
 * `CACHECAPACITY`: The size of the map[key]val for the cache. Default `10`
 * `HOSTPORT`: The port the redix proxy will host on: Default `2020`
 * `CURATECYCLE`: How long to wait before the next curate happens. Default `30` seconds
+* `REQUESTLIMIT`: The request limit before client gets too many requests. Default `200`
+* `REQUESTBURST`: The request burst. Default `3`
 
 ## Methods 
 As of now `redis-proxy` will only accept `GET` request. Any other method will result in `StatusMethodNotAllowed`

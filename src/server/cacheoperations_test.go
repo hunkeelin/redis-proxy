@@ -36,3 +36,17 @@ func TestCachecreate(t *testing.T) {
 		t.Errorf("Cache create test failed foo77 didn't get created")
 	}
 }
+func TestCacheget(t *testing.T) {
+	fmt.Println("Testing cacheGet()")
+	cacheMap := make(map[string]cacheInfo)
+	c := conn{
+		cache: cacheMap,
+	}
+	c.cache["foo7"] = cacheInfo{
+		item: "bar7",
+	}
+	_, ok := c.cacheGet("foo7")
+	if !ok {
+		t.Errorf("Cache get test failed foo7 didn't return a value")
+	}
+}

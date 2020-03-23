@@ -19,3 +19,9 @@ func (c *conn) cacheCreate(key, val string) {
 		modifiedAt: time.Now(),
 	}
 }
+func (c *conn) cacheGet(key string) (cacheInfo, bool) {
+	c.cacheMu.Lock()
+	defer c.cacheMu.Unlock()
+	val, ok := c.cache[key]
+	return val, ok
+}

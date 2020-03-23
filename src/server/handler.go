@@ -20,7 +20,7 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	requestkey = r.Header.Get("rediskey")
-	cacheitem, ok := c.cache[requestkey]
+	cacheitem, ok := c.cacheGet(requestkey)
 	val = cacheitem.item
 	// This is a cache hit
 	if ok {
