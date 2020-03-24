@@ -81,7 +81,14 @@ Redis `GET` command mapped to the HTTP `GET` method.
 * Single backing instance: Each instance of the proxy service is associated with a single Redis service instance. The address of the backing Redis is configured at proxy startup via an env variable. 
 * Cached GET: This proxy have a caching mechanism with `x` seconds of expiration for each cache. The duration can be set via env variable as well. With size limitation.
 * Included `/metrics` URI for prometheus. 
-* configuratable server via env variables. 
+* Global expiry: Entries added to the proy cache are expired after being in cache for a time duration that is globally, configured by environment variable `CACHETTL`
+* LRU eviction: Once the cache fills to capacity, the least recently used key is evicted each time a new key needs to be added to the cache.
+* Fixed key size: Cache capacity in terms of number of keys retains. Controlled by environment variable `CACHECAPACITY`
+* Sequential concurrent processing: Multiple clients are able to concurrently connect to the proxy (Up to configuratble maximum limit `REQUESTLIMIT`) without adversely impacting the functional behaviour of the proxy.
+* Configuration to server is done via environment variables. 
+* Parallel concurrent processing: The limit is controlled by `BURSTLIMIT`
+* Uses redis backing protocol when calling the `get` method to redis when there's a cachemiss. 
+* The cache is of form `map[string]struct` complexity. 
 
 ## Design decisions 
 * Configurations on the proxy is set via environment variables because I expect this to be deployed in docker-like environment. 
