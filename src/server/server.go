@@ -174,10 +174,7 @@ func Server() error {
 	c.redisClient = client
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if limiter.Allow() == false {
-			http.Error(w, http.StatusText(429), http.StatusTooManyRequests)
-			return
-		}
+		limiter.Wait(r.Context())
 		c.mainHandler(w, r)
 	})
 	mux.Handle("/metrics", promhttp.InstrumentMetricHandler(
