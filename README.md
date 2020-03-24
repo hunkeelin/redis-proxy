@@ -6,7 +6,7 @@
 
 
 ## Overview
-This repo implements the redis-proxy service in pods in the below diagram
+This repo implements the redis-proxy service in pods in the below diagram. It act as middleware that takes http `get` and map it to redis `get` protocol. 
 ![Architecture](arch.png)
 
 ## Golang version
