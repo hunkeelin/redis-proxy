@@ -85,6 +85,7 @@ Redis `GET` command mapped to the HTTP `GET` method.
 
 ## Design decisions 
 * Configurations on the proxy is set via environment variables because I expect this to be deployed in docker-like environment. 
+* Instead of having sequential concurrent processing after a certain limit. I return too many request couple with prometheus metrics instead. That way the we can can monitor the total number of requests and proactively handle volume requests situation if that arise. E.g scale up pods, throttle request from the LB side, cloudflare rules etc... 
 
 ## ToDo
 - Add helm.yaml for easier deployment.
