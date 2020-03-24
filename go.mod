@@ -11,4 +11,5 @@ require (
 	github.com/prometheus/client_golang v1.5.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/theckman/go-flock v0.7.1 // indirect
+	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
 )
