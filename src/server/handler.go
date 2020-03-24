@@ -11,6 +11,9 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(statusHeader)
 	w.Write([]byte(towrite))
 }
+
+// handle
+// Note: For now error only returns nil, it can be expand later when it is needed, a function should always return error.
 func (c *conn) handle(w http.ResponseWriter, r *http.Request) (string, int, error) {
 	requestTotal.Inc()
 	var towrite, requestkey string
