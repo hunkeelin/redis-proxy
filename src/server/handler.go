@@ -13,7 +13,7 @@ func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // handle
-// Note: For now error only returns nil, it can be expand later when it is needed, a function should always return error.
+// Note: For now error only returns nil, it can be expand later when it is needed, a go function should always have an error to return.
 func (c *conn) handle(w http.ResponseWriter, r *http.Request) (string, int, error) {
 	requestTotal.Inc()
 	var towrite, requestkey string
@@ -37,7 +37,7 @@ func (c *conn) handle(w http.ResponseWriter, r *http.Request) (string, int, erro
 	towrite, err := c.redisClient.Get(requestkey).Result()
 	// the requested key is not in cache nor in redis server
 	if err != nil {
-		log.Info(fmt.Sprintf("Client requesting key value that doesn't exist %s", requestkey))
+		log.Warning(fmt.Sprintf("Client requesting key value that doesn't exist %s", requestkey))
 		invalidkey.Inc()
 		statusNotFound.Inc()
 		return "", http.StatusNotFound, nil

@@ -93,6 +93,7 @@ Redis `GET` command mapped to the HTTP `GET` method.
 ## Design decisions 
 * Configurations on the proxy is set via environment variables because I expect this to be deployed in docker-like environment. 
 
-## ToDo
+## Todo
 - Add helm.yaml for easier deployment.
+- Dockerize the app for testing. Some functionality cannot be tested with unit test.
 - Add terraform for to setup the infrastructure needed. 

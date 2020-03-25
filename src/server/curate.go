@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// curate: This is the periodic curate function
 func (c *conn) curate() error {
 	c.cacheMu.Lock()
 	defer c.cacheMu.Unlock()
@@ -16,11 +17,13 @@ func (c *conn) curate() error {
 	}
 	return nil
 }
-func (c *conn) curateLeastUse() {
+
+// curateLeastUse: Curates the least use cache key or over cachettl
+func (c *conn) curateLeastUse() error {
 	c.cacheMu.Lock()
 	defer c.cacheMu.Unlock()
 	if len(c.cache) < c.cacheCapacity {
-		return
+		return nil
 	}
 	log.Info("The cache is full, curating least use")
 	var leastusekey string
@@ -30,7 +33,7 @@ func (c *conn) curateLeastUse() {
 		// If the item is close to c.cachettl just delete it.  it's going to curate by the periodic curate anyways, this logic save time.
 		if now.Sub(val.modifiedAt).Seconds() > c.cachettl {
 			delete(c.cache, key)
-			return
+			return nil
 		}
 		if now.Sub(val.modifiedAt).Seconds() > longestliving {
 			longestliving = now.Sub(val.modifiedAt).Seconds()
@@ -43,4 +46,5 @@ func (c *conn) curateLeastUse() {
 	} else {
 		log.Info("The least use key was deleted: " + leastusekey)
 	}
+	return nil
 }
