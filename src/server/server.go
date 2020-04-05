@@ -173,13 +173,17 @@ func Server() error {
 	c.cache = cacheMap
 	c.redisClient = client
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		limiter.Wait(r.Context())
-		c.mainHandler(w, r)
-	})
 	mux.Handle("/metrics", promhttp.InstrumentMetricHandler(
 		prometheus.DefaultRegisterer, promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{}),
 	))
+	mux.HandleFunc("/key/", func(w http.ResponseWriter, r *http.Request) {
+		limiter.Wait(r.Context())
+		c.mainHandler(w, r)
+	})
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		limiter.Wait(r.Context())
+		c.faultHandler(w, r)
+	})
 	j := &httpserver.ServerConfig{
 		BindPort: c.hostPort,
 		BindAddr: "",

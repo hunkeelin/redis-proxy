@@ -4,12 +4,18 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"strings"
 )
 
 func (c *conn) mainHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("yes")
 	towrite, statusHeader, _ := c.handle(w, r)
 	w.WriteHeader(statusHeader)
 	w.Write([]byte(towrite))
+}
+func (c *conn) faultHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("no")
+	w.WriteHeader(http.StatusBadRequest)
 }
 
 // handle
@@ -21,11 +27,21 @@ func (c *conn) handle(w http.ResponseWriter, r *http.Request) (string, int, erro
 		statusMethodNotAllowed.Inc()
 		return "", http.StatusMethodNotAllowed, nil
 	}
-	if r.Header.Get("rediskey") == "" {
+	if len(r.RequestURI) < 4 {
+		log.Error("Request url have a length lower than 4 something is seriously wrong. " + r.RequestURI)
+		return "", http.StatusBadRequest, nil
+	}
+
+	if !strings.Contains(r.RequestURI, "/key/") {
+		log.Error("The inintial URI directory is not /key/ something is seriously wrong. " + r.RequestURI)
+		return "", http.StatusBadRequest, nil
+	}
+
+	requestkey = strings.Trim(r.RequestURI, "/key/")
+	if requestkey == "" {
 		statusBadRequest.Inc()
 		return "", http.StatusBadRequest, nil
 	}
-	requestkey = r.Header.Get("rediskey")
 	cacheitem, ok := c.cacheGet(requestkey)
 	towrite = cacheitem.item
 	// This is a cache hit

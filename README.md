@@ -14,7 +14,7 @@ This repo implements the redis-proxy service in pods in the below diagram. It ac
 `redis-proxy` is currently compatible with golang version from 1.12+.
 
 ## User Manual
-* The server only allow `GET` and it requires header `rediskey`. For detail documentation on configurations please checkout [documentation](src/server/README.md).
+* The server only allow `GET` and it requires uri `/key/${rediskey}`. For detail documentation on configurations please checkout [documentation](src/server/README.md).
 ## Usage
 ```go
 package main
